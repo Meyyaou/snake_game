@@ -1,0 +1,62 @@
+body{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    font-family: 'Press Start 2P', system-ui;
+    background-color: #444444;
+}
+.h1-container{
+    position: relative;
+    margin: 0 auto;
+    clear: left;
+    height: auto;
+    z-index: 0;
+
+}
+
+#canvas{
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    background-color: #727e4e; 
+    border: black solid 5px;
+    border-radius: 15px;
+}
+.canvas-container{
+    border: none;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    padding: 10px;
+    width: 500px;
+    height: 500px;
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    
+}
+
+#play{
+    border: none;
+    background-color: #444444;
+    padding: 14px 29px;
+    font-size:60x;
+    cursor: pointer;
+    font-family: 'Press Start 2P', system-ui;
+}
+.canvas-container .button-container{
+    display: flex;
+    justify-content: center;
+  
+}
+#play:hover{
+    background-color: #727e4e;
+}
+.manual{
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  left:5%;
+  width: 200px;
+}

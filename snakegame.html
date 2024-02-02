@@ -2,33 +2,23 @@
 <html>
     <head>
         <title>Snake game</title>
-        
-    </head>
-    <body>
-        <h1>SNAKE </h1>
-        <canvas id="canvas" width="500" height="500"></canvas>
-        <style>
-            #canvas{
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                position: absolute;
-            }
-        </style> <script src="snake.js"></script>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">    <body>
+        <div class="h1-container"><h1>SNAKE </h1></div>
+        <div class="canvas-container"><canvas id="canvas" width="300" height="300"></canvas>
+        <div class="button-container"><button id="play" type="button">Play</button></div>
+    </div>
+        <script src="snake.js"></script>
         <section>
-            <div>
+            <div class="manual">
                 <!--add here a small exlanation for the keys
                     -- inside a box, with en plus choix mode-->
-                <p>How to play:</p>
-                <p>press up down left and right to move the snake</p>
-                <p> press space to pause the game</p>
-                <p> have fun !</p>
+                <p>How to play: <br>press up down left and right to move the snake <br>press space to pause the game <br>have fun !</p>
+       
             </div>
-            <div>
-                <button>
-                    Restart <!--replace with button to restart-->
-                </button>
-            </div>
+        
         </section>
     </body>
    

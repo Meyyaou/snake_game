@@ -1,13 +1,13 @@
 //the board(canvas)
-const border='black';
-const background='white';
+const border='white';
+const background='#727e4e';
 const col='lightgreen';
-const snake_border='blue';
+const snake_border='white';
 const board=document.getElementById("canvas");
 const board_context=canvas.getContext("2d");
 var score=0;
 document.addEventListener("keydown", moveDir)
-
+//const restart=document.getElementById("play");
 
 //the snake now:
 let snake=[{x: 200, y: 200},{x:190, y:200}, {x:180, y:200},
@@ -45,8 +45,8 @@ function AffSnake(){
 }
 
 function drawSnake(snakeSeg){
-    board_context.fillStyle='lightgreen';
-    board_context.strokestyle='red';
+    board_context.fillStyle='white';
+    board_context.strokestyle='white';
     board_context.fillRect(snakeSeg.x, snakeSeg.y, 10, 10);
     board_context.strokeRect(snakeSeg.x, snakeSeg.y, 10, 10);  
     
@@ -64,11 +64,11 @@ function endGame(){
         //alert("game ovvvver");
         console.log("game over");    
     }
-   /* for( i=0; i<snake.length; i++){
+    for( i=0; i<snake.length; i++){
         if(snake[i].x === snake[0].x && snake[i].y === snake[0].y){ //for collide to itself
-           return true;
+           Restart();
         }
-    }*/
+    }
 }
 
 function moveDir(event){
