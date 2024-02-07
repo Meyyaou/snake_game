@@ -60,3 +60,9 @@ body{
   left:5%;
   width: 200px;
 }
+
+@media screen and (max-width:880px ) {
+    .manual{
+        display: none;
+    }
+}

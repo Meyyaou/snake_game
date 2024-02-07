@@ -5,24 +5,30 @@ const col='lightgreen';
 const snake_border='white';
 const board=document.getElementById("canvas");
 const board_context=canvas.getContext("2d");
-var score=0;
-document.addEventListener("keydown", moveDir)
+let score=0;
+document.addEventListener("keydown", move)
 //const restart=document.getElementById("play");
-
+let sameDir=false;
+let xF;
+let yF;
 //the snake now:
 let snake=[{x: 200, y: 200},{x:190, y:200}, {x:180, y:200},
-{x:170, y:200}, {x:160, y:200}, ];
+{x:170, y:200}, {x:160, y:200}, {x:150, y:200}, {x:140, y:200}, {x:130, y:200}  ];
 let dx= 0;
 let dy= 10;
 
 main();
+generatefood();
+
 function main(){
   
+    if(isGameOver()) return;
 
-    moveDir=false;
+    sameDir=false;
     setTimeout(function onTick(){
         Restart(); //demarrer a  nouveau
-        move(); //le bouger
+        drawFood();
+        moveSnake(); //le bouger
         AffSnake(); //IMPORTANT sinon we dont see the game
         main();
         //mettre des checkpoints
@@ -30,14 +36,30 @@ function main(){
         //
     
     }, 100)}
-    
+   
+    function generatefood() {  
+        xF=Math.floor((Math.random()* (board.width - 10)+ 0)/ 10)*10;
+        yF=Math.floor((Math.random()* (board.height - 10)+ 0)/ 10)*10;
+
+       snake.forEach(function did_snake_eat_food(part) {
+            const ate = part.x == xF && part.y ==yF;
+            if (ate) generatefood();
+          });
+    }
+
+    function drawFood(){
+
+      board_context.fillStyle = 'black';
+      board_context.strokestyle = 'darkgreen';
+      board_context.fillRect(xF, yF, 10, 10);
+      board_context.strokeRect(xF, yF, 10, 10);
+}
 
 function Restart(){
     board_context.fillStyle=background;
     board_context.strokestyle=border;
     board_context.fillRect(0, 0, board.width, board.height);
     board_context.strokeRect(0, 0, board.width, board.height);
-    endGame();
 }
 
 function AffSnake(){
@@ -52,63 +74,82 @@ function drawSnake(snakeSeg){
     
 }
 
-function move(){
+function moveSnake(){
     const head={x: snake[0].x + dx, y: snake[0].y +dy};
     snake.unshift(head);
-    snake.pop();
+    const ate = snake[0].x === xF && snake[0].y === yF;
+    if (ate) {
+        score += 10;
+        document.getElementsByClassName('score').innerHTML = score;//tofix error of display?
+        generatefood();
+      } else {
+        snake.pop();
+      }
 }
 
-function endGame(){
+function isGameOver(){
     //collision with walls
     if(snake[0].x < 0 || snake[0].x >board.width -10 || snake[0].y <0|| snake[0].y > board.height- 10){
-        //alert("game ovvvver");
-        console.log("game over");    
+        alert("game over");
+        return true;    
     }
-    for( i=0; i<snake.length; i++){
+    for( i=4; i<snake.length; i++){
         if(snake[i].x === snake[0].x && snake[i].y === snake[0].y){ //for collide to itself
-           Restart();
+           //alert("game over");
+           console.log("game?"); //to fix i think ther ei san error here
+            return true;   
         }
     }
 }
 
-function moveDir(event){
+function move(event){
     const left=37;
     const right=39;
     const up=38;
     const down=40;
     const space=32; //pause
 
+    if(sameDir) return;
+    sameDir=true;
     const pressed= event.keyCode;
     const moveRight= dx === 10;
     const moveLeft= dx === -10;
     const moveDown= dy === 10;
     const moveUp= dy === -10;
 
-    if(pressed === left && !moveRight){
-        dx = -10;
-          dy = 0;  
-     }
- 
-     if (pressed === up && !moveDown)
-     {    
+    switch (pressed) {
+        case left:
+          if (!moveRight) {
+            dx = -10;
+            dy = 0;
+          }
+          break;
+        case up:
+          if (!moveDown) {
+            dx = 0;
+            dy = -10;
+          }
+          break;
+        case right:
+          if (!moveLeft) {
+            dx = 10;
+            dy = 0;
+          }
+          break;
+        case down:
+          if (!moveUp) {
+            dx = 0;
+            dy = 10;
+          }
+          break;
+        case space:   //tofix pause depause        
           dx = 0;
-          dy = -10;
-     }
- 
-     if (pressed === right && !moveLeft)
-     {    
-          dx = 10;
           dy = 0;
-     }
- 
-     if (pressed === down && !moveUp)
-     {    
-          dx = 0;
-          dy = 10;
-     }
-     if(pressed === space){
-        dx= 0;
-        dy=0;
-     }
+           break;
+        default:
+          break;
+      }
+      
+
     
 }
