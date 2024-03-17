@@ -37,7 +37,7 @@ body{
     
 }
 
-#play{
+#play, #pause{
     border: none;
     background-color: #444444;
     padding: 14px 29px;
@@ -50,9 +50,19 @@ body{
     justify-content: center;
   
 }
-#play:hover{
+#play:hover,#pause:hover{
     background-color: #727e4e;
 }
+.score-container {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
 .manual{
   position: absolute;
   top: 50%;

@@ -5,7 +5,6 @@ const col='lightgreen';
 const snake_border='white';
 const board=document.getElementById("canvas");
 const board_context=canvas.getContext("2d");
-let score=0;
 document.addEventListener("keydown", move)
 //const restart=document.getElementById("play");
 let sameDir=false;
@@ -16,7 +15,6 @@ let snake=[{x: 200, y: 200},{x:190, y:200}, {x:180, y:200},
 {x:170, y:200}, {x:160, y:200}, {x:150, y:200}, {x:140, y:200}, {x:130, y:200}  ];
 let dx= 0;
 let dy= 10;
-
 main();
 generatefood();
 
@@ -43,7 +41,8 @@ function main(){
 
        snake.forEach(function did_snake_eat_food(part) {
             const ate = part.x == xF && part.y ==yF;
-            if (ate) generatefood();
+            if (ate) {
+              generatefood();}
           });
     }
 
@@ -79,8 +78,8 @@ function moveSnake(){
     snake.unshift(head);
     const ate = snake[0].x === xF && snake[0].y === yF;
     if (ate) {
-        score += 10;
-        document.getElementsByClassName('score').innerHTML = score;//tofix error of display?
+        let score =parseInt(document.querySelector(".score").innerHTML);
+        document.querySelector('.score').innerHTML = parseInt(score) +10;//tofix error of display?
         generatefood();
       } else {
         snake.pop();
@@ -95,8 +94,8 @@ function isGameOver(){
     }
     for( i=4; i<snake.length; i++){
         if(snake[i].x === snake[0].x && snake[i].y === snake[0].y){ //for collide to itself
-           //alert("game over");
-           console.log("game?"); //to fix i think ther ei san error here
+           alert("game over");
+           //console.log("game?"); to fix i think ther ei san error here
             return true;   
         }
     }
@@ -111,11 +110,16 @@ function move(event){
 
     if(sameDir) return;
     sameDir=true;
+
     const pressed= event.keyCode;
     const moveRight= dx === 10;
     const moveLeft= dx === -10;
     const moveDown= dy === 10;
     const moveUp= dy === -10;
+
+    let pausedDx = dx;
+    let pausedDy = dy;
+    let isPaused= false;
 
     switch (pressed) {
         case left:
@@ -142,9 +146,18 @@ function move(event){
             dy = 10;
           }
           break;
-        case space:   //tofix pause depause        
+        case space:   //tofix pause depause     
+        if(!isPaused){   
+          pausedDx=dx;
+          pausedDy=dy;
           dx = 0;
           dy = 0;
+          isPaused=true;
+         }else{
+          dy=pausedDy;
+          dx=pausedDx;
+          isPaused=false;
+           }
            break;
         default:
           break;
