@@ -6,7 +6,8 @@ const snake_border='white';
 const board=document.getElementById("canvas");
 const board_context=canvas.getContext("2d");
 document.addEventListener("keydown", move)
-//const restart=document.getElementById("play");
+const restart=document.getElementById("play");
+const depause = document.getElementById('pause');
 let sameDir=false;
 let xF;
 let yF;
@@ -20,20 +21,20 @@ generatefood();
 
 function main(){
   
-    if(isGameOver()) return;
+    if(isGameOver())return;
 
     sameDir=false;
     setTimeout(function onTick(){
-        Restart(); //demarrer a  nouveau
+      if (!isPaused) {
+        Restart(); //demarrer a nouveau
         drawFood();
         moveSnake(); //le bouger
         AffSnake(); //IMPORTANT sinon we dont see the game
-        main();
-        //mettre des checkpoints
-       
-        //
-    
-    }, 100)}
+    }
+    main(); // Appeler main indépendamment de la pause pour vérifier en permanence
+}, 100);
+}
+
    
     function generatefood() {  
         xF=Math.floor((Math.random()* (board.width - 10)+ 0)/ 10)*10;
@@ -100,7 +101,16 @@ function isGameOver(){
         }
     }
 }
+function handleClick(btn){
+  if (btn==refreshbtn){
+    window.location.reload();
+  }
+}
 
+let isPaused= false;
+
+let pausedDx = dx;
+let pausedDy = dy;
 function move(event){
     const left=37;
     const right=39;
@@ -117,9 +127,6 @@ function move(event){
     const moveDown= dy === 10;
     const moveUp= dy === -10;
 
-    let pausedDx = dx;
-    let pausedDy = dy;
-    let isPaused= false;
 
     switch (pressed) {
         case left:
@@ -146,23 +153,23 @@ function move(event){
             dy = 10;
           }
           break;
-        case space:   //tofix pause depause     
+        case space:   //FIXED pause   
         if(!isPaused){   
-          pausedDx=dx;
-          pausedDy=dy;
-          dx = 0;
-          dy = 0;
-          isPaused=true;
-         }else{
-          dy=pausedDy;
-          dx=pausedDx;
-          isPaused=false;
+          isPaused = !isPaused;
+          break;
            }
            break;
         default:
           break;
       }
-      
-
-    
 }
+
+function handleClick() {
+  window.location.reload();
+}
+
+restart.addEventListener("click", handleClick);
+
+depause.addEventListener('click', () => {
+  isPaused = false; // Reprendre le jeu lorsque le bouton est cliqué
+});
