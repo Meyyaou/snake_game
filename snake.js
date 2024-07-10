@@ -1,36 +1,59 @@
 //the board(canvas)
-const border='black';
-const background='white';
+const border='white';
+const background='#727e4e';
 const col='lightgreen';
-const snake_border='blue';
+const snake_border='white';
 const board=document.getElementById("canvas");
 const board_context=canvas.getContext("2d");
-var score=0;
-document.addEventListener("keydown", moveDir)
-
-
+document.addEventListener("keydown", move)
+const restart=document.getElementById("play");
+const depause = document.getElementById('pause');
+let sameDir=false;
+let xF;
+let yF;
 //the snake now:
 let snake=[{x: 200, y: 200},{x:190, y:200}, {x:180, y:200},
-{x:170, y:200}, {x:160, y:200}, ];
+{x:170, y:200}, {x:160, y:200}, {x:150, y:200}, {x:140, y:200}, {x:130, y:200}  ];
 let dx= 0;
 let dy= 10;
-
 main();
-function main(){
-  //  if(hasEnded()) return;
+generatefood();
 
-    //moveDir=false;
+function main(){
+  
+    if(isGameOver())return;
+
+    sameDir=false;
     setTimeout(function onTick(){
-        Restart(); //demarrer a  nouveau
-        move(); //le bouger
+      if (!isPaused) {
+        Restart(); //demarrer a nouveau
+        drawFood();
+        moveSnake(); //le bouger
         AffSnake(); //IMPORTANT sinon we dont see the game
-        main();
-        //mettre des checkpoints
-    
-        //
-    
-    }, 100)}
-    
+    }
+    main(); // Appeler main indépendamment de la pause pour vérifier en permanence
+}, 100);
+}
+
+   
+    function generatefood() {  
+        xF=Math.floor((Math.random()* (board.width - 10)+ 0)/ 10)*10;
+        yF=Math.floor((Math.random()* (board.height - 10)+ 0)/ 10)*10;
+
+       snake.forEach(function did_snake_eat_food(part) {
+            const ate = part.x == xF && part.y ==yF;
+            if (ate) {
+              generatefood();}
+          });
+    }
+
+    function drawFood(){
+
+      board_context.fillStyle = 'black';
+      board_context.strokestyle = 'darkgreen';
+      board_context.fillRect(xF, yF, 10, 10);
+      board_context.strokeRect(xF, yF, 10, 10);
+}
 
 function Restart(){
     board_context.fillStyle=background;
@@ -44,37 +67,59 @@ function AffSnake(){
 }
 
 function drawSnake(snakeSeg){
-    board_context.fillStyle='lightgreen';
-    board_context.strokestyle='red';
+    board_context.fillStyle='white';
+    board_context.strokestyle='white';
     board_context.fillRect(snakeSeg.x, snakeSeg.y, 10, 10);
-    board_context.strokeRect(snakeSeg.x, snakeSeg.y, 10, 10);
+    board_context.strokeRect(snakeSeg.x, snakeSeg.y, 10, 10);  
+    
 }
 
-function move(){
+function moveSnake(){
     const head={x: snake[0].x + dx, y: snake[0].y +dy};
     snake.unshift(head);
-    snake.pop();
+    const ate = snake[0].x === xF && snake[0].y === yF;
+    if (ate) {
+        let score =parseInt(document.querySelector(".score").innerHTML);
+        document.querySelector('.score').innerHTML = parseInt(score) +10;//tofix error of display?
+        generatefood();
+      } else {
+        snake.pop();
+      }
 }
-function hasEnded(){
-    for(let i=4; i< snake.length; i++){
-        const has_collided= snake[i].y === snake[0].y && snake[i].x === snake[0].x;
-        if(has_collided)
-            return true;
+
+function isGameOver(){
+    //collision with walls
+    if(snake[0].x < 0 || snake[0].x >board.width -10 || snake[0].y <0|| snake[0].y > board.height- 10){
+        alert("game over");
+        return true;    
     }
-    const lwall= snake[0].x < 0;
-    const rwall= snake[0].x > board.width - 10;
-    const twall= snake[0].y &lt; 0;
-    const bwall= snake[0].y > board.height - 10;
-
-    return lwall || rwall || bwall || twall;
-
+    for( i=4; i<snake.length; i++){
+        if(snake[i].x === snake[0].x && snake[i].y === snake[0].y){ //for collide to itself
+           alert("game over");
+           //console.log("game?"); to fix i think ther ei san error here
+            return true;   
+        }
+    }
+}
+function handleClick(btn){
+  if (btn==refreshbtn){
+    window.location.reload();
+  }
 }
 
-function moveDir(event){
+let isPaused= false;
+
+let pausedDx = dx;
+let pausedDy = dy;
+function move(event){
     const left=37;
     const right=39;
     const up=38;
     const down=40;
+    const space=32; //pause
+
+    if(sameDir) return;
+    sameDir=true;
 
     const pressed= event.keyCode;
     const moveRight= dx === 10;
@@ -82,26 +127,49 @@ function moveDir(event){
     const moveDown= dy === 10;
     const moveUp= dy === -10;
 
-    if(pressed === left && !moveRight){
-        dx = -10;
-          dy = 0;  
-     }
- 
-     if (pressed === up && !moveDown)
-     {    
-          dx = 0;
-          dy = -10;
-     }
- 
-     if (pressed === right && !moveLeft)
-     {    
-          dx = 10;
-          dy = 0;
-     }
- 
-     if (pressed === down && !moveUp)
-     {    
-          dx = 0;
-          dy = 10;
-     }
+
+    switch (pressed) {
+        case left:
+          if (!moveRight) {
+            dx = -10;
+            dy = 0;
+          }
+          break;
+        case up:
+          if (!moveDown) {
+            dx = 0;
+            dy = -10;
+          }
+          break;
+        case right:
+          if (!moveLeft) {
+            dx = 10;
+            dy = 0;
+          }
+          break;
+        case down:
+          if (!moveUp) {
+            dx = 0;
+            dy = 10;
+          }
+          break;
+        case space:   //FIXED pause   
+        if(!isPaused){   
+          isPaused = !isPaused;
+          break;
+           }
+           break;
+        default:
+          break;
+      }
 }
+
+function handleClick() {
+  window.location.reload();
+}
+
+restart.addEventListener("click", handleClick);
+
+depause.addEventListener('click', () => {
+  isPaused = false; // Reprendre le jeu lorsque le bouton est cliqué
+});
